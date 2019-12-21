@@ -1,0 +1,76 @@
+package src;
+
+import java.util.Random;
+
+public class Main {
+
+    public static void main(String[] args) throws InterruptedException {
+        
+
+        //new MyThread("+").start();
+    	int a = 0;
+    	Random r = new Random();
+    	boolean b= r.nextBoolean();
+    	ModifyBalance t1 = new ModifyBalance(a);
+        t1.start();
+        ModifyBalance t2 = new ModifyBalance(a);
+        t2.start();
+        Thread.sleep(1000);
+        t1.flag = false;
+        
+        
+    }
+    private static Object key = new Object();
+    public static void test(int a) {
+        try {
+            synchronized (key) {
+            	Random r = new Random();
+            	boolean b = r.nextBoolean();
+            	int x= r.nextInt(100);    	
+
+    			if(b){
+    				x= r.nextInt(100);    	
+    				a += x;
+
+    				System.out.print("Plus " + x +". Now "+ a + ". " + "\n");
+    				Thread.sleep(1000);
+    			} else {
+	    			x= r.nextInt(100);    	
+	
+	    			if (a>=x){
+	    			
+	    				x= r.nextInt(100);    	
+	    				a -= x;
+
+	    				System.out.print("Min " + x +". Now "+ a + ". "+ "\n");
+	    				Thread.sleep(1000);
+	    			} else {
+	    				System.out.print("Error! Tried to min "+x +" but "+a+ " (a) is too min!" +"\n");
+	                    Thread.sleep(1000);
+	
+	    			}
+    			}
+             //   key.notify(); // возобновить поток кот. в режиме wait()
+             //   key.wait(); // поставить поток в режим wait до вызова notify()
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+public class ModifyBalance extends Thread {
+        private int a;
+        public boolean flag = true;
+        
+        ModifyBalance(int m) {
+            this.a = m;
+        }
+
+        public void run() {
+            while(flag) {
+                Main.test(a);
+            }
+        }
+}
+       
